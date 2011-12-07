@@ -11,7 +11,7 @@
 #include <ClanLib/display.h>
 #include <ClanLib/application.h>
 
-#include <math.h>
+#include <cmath>
 #include <fstream>
 #include <sstream>
 
@@ -34,6 +34,7 @@
 #include "cachampionshipscreen.h"
 #include "caslotselectiondialog.h"
 #include "shopscreen.h"
+#include "windialog.h"
 
 // Global instance of the application needed by the ClanLib main():
 //
@@ -203,10 +204,12 @@ CATrophy::start(const std::vector<CL_String> &args )
             
         CL_DirectoryScanner checker;
         if (checker.scan(m_homedir))
-            std::cout << m_homedir << " exists" << std::endl;
+        {
+            if (debug) std::cout << m_homedir << " exists" << std::endl;
+        }
         else
         {
-            std::cout << m_homedir << " doesn't exist" << std::endl;
+            if (debug) std::cout << m_homedir << " doesn't exist" << std::endl;
             CL_Directory::create(m_homedir);
         }
             
@@ -617,32 +620,32 @@ CATrophy::resetPlayers()
     if( CA_MAXPLAYERS>2 ) player[2]->setName( "Dark Rider" );
     if( CA_MAXPLAYERS>3 ) player[3]->setName( "Speedy Joe" );
     if( CA_MAXPLAYERS>4 ) player[4]->setName( "Sunnyboy" );
-    if( CA_MAXPLAYERS>5 ) player[5]->setName( "Jane" );
-    if( CA_MAXPLAYERS>6 ) player[6]->setName( "Player 6" );
-    if( CA_MAXPLAYERS>7 ) player[7]->setName( "Player 7" );
-    if( CA_MAXPLAYERS>8 ) player[8]->setName( "Player 8" );
-    if( CA_MAXPLAYERS>9 ) player[9]->setName( "Player 9" );
-    if( CA_MAXPLAYERS>10 ) player[10]->setName( "Player 10" );
+    if( CA_MAXPLAYERS>5 ) player[5]->setName( "Jane Zaine" );
+    if( CA_MAXPLAYERS>6 ) player[6]->setName( "John Doe" );
+    if( CA_MAXPLAYERS>7 ) player[7]->setName( "Sky Carter" );
+    if( CA_MAXPLAYERS>8 ) player[8]->setName( "Billy Kid" );
+    if( CA_MAXPLAYERS>9 ) player[9]->setName( "Echotango" );
+    if( CA_MAXPLAYERS>10 ) player[10]->setName( "Cletus Fuego" );
     if( CA_MAXPLAYERS>11 ) player[11]->setName( "Crazy Slider" );
-    if( CA_MAXPLAYERS>12 ) player[12]->setName( "Player 12" );
-    if( CA_MAXPLAYERS>13 ) player[13]->setName( "Player 13" );
-    if( CA_MAXPLAYERS>14 ) player[14]->setName( "Player 14" );
+    if( CA_MAXPLAYERS>12 ) player[12]->setName( "Stream Jet" );
+    if( CA_MAXPLAYERS>13 ) player[13]->setName( "Firestorm" );
+    if( CA_MAXPLAYERS>14 ) player[14]->setName( "Old Beetle" );
     if( CA_MAXPLAYERS>15 ) player[15]->setName( "Blaze Shaw" );
-    if( CA_MAXPLAYERS>16 ) player[16]->setName( "Player 16" );
-    if( CA_MAXPLAYERS>17 ) player[17]->setName( "Player 17" );
-    if( CA_MAXPLAYERS>18 ) player[18]->setName( "Player 18" );
-    if( CA_MAXPLAYERS>19 ) player[19]->setName( "Player 19" );
-    if( CA_MAXPLAYERS>20 ) player[20]->setName( "Player 20" );
-    if( CA_MAXPLAYERS>21 ) player[21]->setName( "Player 21" );
-    if( CA_MAXPLAYERS>22 ) player[22]->setName( "Player 22" );
-    if( CA_MAXPLAYERS>23 ) player[23]->setName( "Dark Ghost" );
-    if( CA_MAXPLAYERS>24 ) player[24]->setName( "Player 24" );
-    if( CA_MAXPLAYERS>25 ) player[25]->setName( "Player 25" );
-    if( CA_MAXPLAYERS>26 ) player[26]->setName( "Player 26" );
-    if( CA_MAXPLAYERS>27 ) player[27]->setName( "Player 27" );
-    if( CA_MAXPLAYERS>28 ) player[28]->setName( "Player 28" );
+    if( CA_MAXPLAYERS>16 ) player[16]->setName( "Bonnie T." );
+    if( CA_MAXPLAYERS>17 ) player[17]->setName( "Freeze Bee" );
+    if( CA_MAXPLAYERS>18 ) player[18]->setName( "Double Tee" );
+    if( CA_MAXPLAYERS>19 ) player[19]->setName( "Harkness" );
+    if( CA_MAXPLAYERS>20 ) player[20]->setName( "O'Brian" );
+    if( CA_MAXPLAYERS>21 ) player[21]->setName( "Holly Wood" );
+    if( CA_MAXPLAYERS>22 ) player[22]->setName( "Toshiko Ito" );
+    if( CA_MAXPLAYERS>23 ) player[23]->setName( "White Ghost" );
+    if( CA_MAXPLAYERS>24 ) player[24]->setName( "Li Mei Zhao" );
+    if( CA_MAXPLAYERS>25 ) player[25]->setName( "Furious Bird" );
+    if( CA_MAXPLAYERS>26 ) player[26]->setName( "Mister X" );
+    if( CA_MAXPLAYERS>27 ) player[27]->setName( "Longhorn" );
+    if( CA_MAXPLAYERS>28 ) player[28]->setName( "Fast Tracker" );
     if( CA_MAXPLAYERS>29 ) player[29]->setName( "Bill Speed" );
-    if( CA_MAXPLAYERS>30 ) player[30]->setName( "Player 30" );
+    if( CA_MAXPLAYERS>30 ) player[30]->setName( "Thunderspot" );
     if (m_cheatMoney)
     {
         player[0]->addMoney (74000);
@@ -955,15 +958,23 @@ CATrophy::saveGame()
     if (saveFileName == "")
         return isOk; // TODO: handle this (or not)      
     std::string saveFileString = m_homedir + saveFileName;
-    std::cout << "saving " << saveFileString << std::endl;
+    if (debug) std::cout << "saving " << saveFileString << std::endl;
     std::ofstream saveFile(saveFileString.c_str());
     if (saveFile)
     {
         saveFile << VERSION << std::endl;
         saveFile << difficulty << std::endl;
         saveFile << m_nbTurns << std::endl;
-        for (unsigned int i=0; i<m_currentTrackNumbers.size(); ++i)
-            saveFile << m_currentTrackNumbers[i] << std::endl;
+        if (m_currentTrackNumbers.size() != 3)
+        {
+            for (unsigned int i=0; i<3; ++i)
+                saveFile << -1 << std::endl;
+        }
+        else 
+        {
+            for (unsigned int i=0; i<3; ++i)
+                saveFile << m_currentTrackNumbers[i] << std::endl;
+        }
         // TODO: This code should probably be in player.cpp
         for( unsigned int c=0; c<CA_MAXPLAYERS; ++c )
         {
@@ -1008,7 +1019,7 @@ CATrophy::loadGame()
     }
     
     std::string loadFileString = m_homedir + loadFileName;
-    std::cout << "loading " << loadFileString << std::endl;
+    if (debug) std::cout << "loading " << loadFileString << std::endl;
     
     std::ifstream loadFile(loadFileString.c_str());
     if (loadFile)
@@ -1032,7 +1043,8 @@ CATrophy::loadGame()
         {
             int trackNumber;
             loadFile >> trackNumber;
-            m_currentTrackNumbers.push_back(trackNumber);
+            if (trackNumber != -1)
+                m_currentTrackNumbers.push_back(trackNumber);
         }
 
         // TODO: This code should probably be in player.cpp
@@ -1126,14 +1138,22 @@ void CATrophy::gameLoop()
                     ++m_gameLoopState;
                 }
                 else
-                    std::cerr << "Internal Error" << std::endl; // TODO: A voir, normallement cas impossible
+                    std::cerr << "Internal Error" << std::endl; // TODO: Check if it is really impossible
             }
         }
         if (m_gameLoopState == 2)
         {
-            CAChampionshipScreen myChampionShip(player, allRunningPlayers, CA_RES->menu_bg, CA_RES->gui_button, CA_RES->gui_button_green,  CA_RES->gui_button_blue, CA_RES->gui_button_red, CA_RES->font_normal_11_white);
-            myChampionShip.run();
-            ++m_gameLoopState;
+            CAChampionshipScreen myChampionShip(player[0], player, allRunningPlayers, CA_RES->menu_bg, CA_RES->gui_button, CA_RES->gui_button_green,  CA_RES->gui_button_blue, CA_RES->gui_button_red, CA_RES->font_normal_11_white);
+            if (myChampionShip.run())
+                ++m_gameLoopState;
+            else
+            {
+                WinDialog win(player[0]->getName(), m_nbTurns);
+                win.run();
+                ++m_gameLoopState;
+                goOn = false;
+            }
+                
         }
 
         m_gameLoopState = m_gameLoopState%3;
@@ -1201,7 +1221,6 @@ CATrophy::run()
 {
     if(debug) std::cout << "Game Running" << std::endl;
     m_nbTurns++;
-    std::cout << "Nb Tour:" << m_nbTurns << std::endl; // TODO: Sauvegarder
 
     int  gameStartTime;  // Race started
     int  goodyTime;         // Last goody placed at...
@@ -1389,8 +1408,6 @@ CATrophy::run()
                     !m_RacePlayer[c]->isLapped() &&
                     m_RacePlayer[c]->getRaceRank()==rank )
             {
-				std::cout << m_RacePlayer[c]->getName() << std::endl;
-				std::cout << m_RacePlayer[c]->getRaceRank() << std::endl; 
                 CAPositionTable::getPositionTable()->playerFinishedRace( m_RacePlayer[c] );
                 break;
             }

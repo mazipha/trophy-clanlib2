@@ -17,9 +17,10 @@ bool RankPredicate::operator()(const Player* const p1, const Player* const p2)
 
 /** Constructor.
 */
-CAChampionshipScreen::CAChampionshipScreen(const std::vector<Player*> player, const std::vector<std::vector<Player*> > runningPlayer,
+CAChampionshipScreen::CAChampionshipScreen(Player* humanPlayer, const std::vector<Player*> player, const std::vector<std::vector<Player*> > runningPlayer,
                                                                            CL_Image background, CL_Image button, CL_Image buttonEasy, CL_Image buttonMedium, CL_Image buttonHard, CL_Font_Sprite font)
    : CAScreen(),
+   m_humanPlayer(humanPlayer),
    m_player(player),
    m_runningPlayers(runningPlayer),
    m_background(background),
@@ -82,7 +83,10 @@ CAChampionshipScreen::run()
 
     //CL_Input::chain_button_release.remove( this );
 
-    return (cancel);
+    if (m_player[0] == m_humanPlayer)
+        return 0;
+    else
+        return 1;
 }
 
 /** Builds the screen.
@@ -175,13 +179,15 @@ CAChampionshipScreen::on_key_released (const CL_InputEvent &key, const CL_InputS
             int displayInt = int(m_displayMode) + 1;
             m_displayMode = DisplayMode(displayInt);
             if (m_displayMode == DISPLAY_CHAMPIONSHIP)
-            for (unsigned int pl=0; pl < m_player.size(); pl++)
             {
-                m_player[pl]->addMoney( m_player[pl]->getRaceMoney() );
-                m_player[pl]->setTotalPoints( m_player[pl]->getTotalPoints() + m_player[pl]->getRacePoints() );
+                for (unsigned int pl=0; pl < m_player.size(); pl++)
+                {
+                    m_player[pl]->addMoney( m_player[pl]->getRaceMoney() );
+                    m_player[pl]->setTotalPoints( m_player[pl]->getTotalPoints() + m_player[pl]->getRacePoints() );
+                    m_player[pl]->resetForRace(0, NULL); // Player doesn't belong to a race for now    
+                }
                 // players points have changed so we sort the player list again
                 std::sort(m_player.begin(), m_player.end(), RankPredicate());
-                m_player[pl]->resetForRace(0, NULL); // Player doesn't belong to a race for now
             }
         }
         else

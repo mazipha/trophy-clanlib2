@@ -18,6 +18,9 @@ public:
     virtual void buildScreen();
     virtual void on_key_released( const CL_InputEvent &key, const CL_InputState & state );
 
+protected:
+    void setText(const std::vector<std::string>& newText);
+
 private:
     //! Position of scrolling text
     float scrollPos;
